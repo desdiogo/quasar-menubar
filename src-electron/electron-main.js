@@ -1,4 +1,4 @@
-import { app, BrowserWindow, nativeTheme } from 'electron'
+import { app, BrowserWindow, ipcMain, nativeTheme } from 'electron'
 import path from 'path'
 import os from 'os'
 import { menubar } from 'menubar'
@@ -13,21 +13,41 @@ try {
 }
 catch (_) { }
 
+const menubarIcon = platform === 'win32' ? 'MenuBarIconTemplateWindow.png' : 'MenuBarIconTemplate.png'
+
 const mb = menubar({
-  index: process.env.APP_URL
+  index: process.env.APP_URL,
+  icon: path.resolve(__dirname, `icons/${menubarIcon}`),
+  browserWindow: {
+    width: 270,
+    height: 170, // tray icon
+    minWidth: 270,
+    minHeight: 170,
+    maxWidth: 270,
+    maxHeight: 170,
+    useContentSize: true,
+    webPreferences: {
+      contextIsolation: true,
+      // More info: /quasar-cli/developing-electron-apps/electron-preload-script
+      preload: path.resolve(__dirname, process.env.QUASAR_ELECTRON_PRELOAD)
+    }
+  }
 })
 mb.on('ready', () => {
   console.log('app is ready')
 })
 
-let mainWindow
+ipcMain.handle('quit-app', () => {
+  app.quit()
+})
+
+/* let mainWindow
 
 function createWindow () {
-  /**
-   * Initial window options
-   */
   mainWindow = new BrowserWindow({
-    icon: path.resolve(__dirname, 'icons/icon.png'), // tray icon
+    icon: path.resolve(__dirname, 'icons/icon.png'),
+    width: 270,
+    height: 170, // tray icon
     minWidth: 270,
     minHeight: 170,
     maxWidth: 270,
@@ -71,3 +91,4 @@ app.on('activate', () => {
     createWindow()
   }
 })
+*/

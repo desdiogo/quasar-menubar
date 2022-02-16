@@ -37,6 +37,14 @@
         />
       </div>
     </div>
+    <q-btn
+      @click="quitApp"
+      class="absolute-bottom-right"
+      flat
+      round
+      icon="power_settings_new"
+      size="sm"
+    />
   </q-page>
 </template>
 
@@ -55,6 +63,10 @@
 
   function resetCounter() {
     counter.value = 0
+  }
+
+  function quitApp() {
+    window.myAPI.quitApp()
   }
 
 </script>
